@@ -1,0 +1,136 @@
+.report-container {
+    background: #000000;
+    min-height: 100vh;
+    color: white;
+    display: flex;
+    flex-direction: column;
+}
+
+.report-main-content {
+    flex: 1;
+    padding: 80px 100px 50px 100px; /* Increased top padding to avoid navbar overlap */
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.report-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.target-title {
+    color: #FFFFFF;
+    font-size: 28px;
+    font-weight: 700;
+    margin: 0;
+    border: 2px solid #3A31D8;
+    padding: 15px 30px;
+    border-radius: 8px;
+    display: inline-block;
+    background: rgba(58, 49, 216, 0.1);
+    word-break: break-word;
+    max-width: 100%;
+}
+
+/* Horizontal Filter Tabs */
+.severity-filters-horizontal {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+}
+
+.filter-tab {
+    padding: 12px 24px;
+    border: 2px solid transparent;
+    border-radius: 25px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-width: 100px;
+}
+
+.filter-tab:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+}
+
+.filter-tab.active {
+    border-color: currentColor;
+    transform: scale(1.05);
+}
+
+/* Severity Colors */
+.filter-tab.critical { color: #ff4444; }
+.filter-tab.high { color: #ff8800; }
+.filter-tab.medium { color: #ffcc00; }
+.filter-tab.low { color: #00ff88; }
+.filter-tab.info { color: #3A31D8; }
+
+.filter-tab.critical.active { background: rgba(255, 68, 68, 0.2); }
+.filter-tab.high.active { background: rgba(255, 136, 0, 0.2); }
+.filter-tab.medium.active { background: rgba(255, 204, 0, 0.2); }
+.filter-tab.low.active { background: rgba(0, 255, 136, 0.2); }
+.filter-tab.info.active { background: rgba(58, 49, 216, 0.2); }
+
+.filter-label {
+    font-size: 14px;
+    margin-bottom: 4px;
+}
+
+.filter-count {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+/* Vulnerability List */
+.vulnerability-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* No Findings Message */
+.no-findings {
+    text-align: center;
+    padding: 60px 20px;
+    font-size: 18px;
+    opacity: 0.7;
+    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+}
+
+.no-findings-critical { border-color: #ff4444; color: #ff4444; }
+.no-findings-high { border-color: #ff8800; color: #ff8800; }
+.no-findings-medium { border-color: #ffcc00; color: #ffcc00; }
+.no-findings-low { border-color: #00ff88; color: #00ff88; }
+.no-findings-info { border-color: #3A31D8; color: #3A31D8; }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .report-main-content {
+        padding: 100px 20px 20px 20px;
+    }
+
+    .severity-filters-horizontal {
+        gap: 5px;
+    }
+
+    .filter-tab {
+        padding: 10px 15px;
+        min-width: 80px;
+    }
+
+    .target-title {
+        font-size: 20px;
+        padding: 10px 20px;
+    }
+}

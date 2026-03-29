@@ -1,0 +1,59 @@
+.delta-page {
+  background: #000;
+  min-height: 100vh;
+  color: white;
+  padding: 40px;
+}
+
+.delta-title {
+  text-align: center;
+  font-size: 36px;
+  margin-top: 50px;
+  color: #3a31d8;
+  font-family: 'Space Grotesk', sans-serif;
+}
+
+.delta-inputs {
+  max-width: 400px;
+  margin: 40px auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.delta-inputs label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #EBE9FC;
+}
+
+.delta-inputs input {
+  background: #111;
+  padding: 14px;
+  border-radius: 8px;
+  border: 1px solid #222;
+  color: #fff;
+  font-size: 16px;
+}
+
+.delta-inputs input:focus {
+  outline: none;
+  border-color: #3a31d8;
+}
+
+.delta-inputs button {
+  margin-top: 10px;
+  padding: 14px;
+  background: #161668;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: background 0.3s;
+}
+
+.delta-inputs button:hover {
+  background: #2A2A8A;
+}

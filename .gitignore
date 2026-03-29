@@ -1,0 +1,33 @@
+# Python virtual environment
+venv/
+.venv/
+*/venv/
+*/.venv/
+__pycache__/
+*.pyc
+.Python
+.pytest_cache/
+.coverage
+
+# Environment variables
+.env
+.flaskenv
+
+# Frontend build caches
+build/
+dist/
+node_modules/
+.parcel-cache/
+
+# OS/IDE
+.DS_Store
+.vscode/
+.idea/
+*.log
+npm-debug.log*
+
+# Scanner artifacts
+nikto_*.txt
+nikto_*.json
+EOF
+/certs

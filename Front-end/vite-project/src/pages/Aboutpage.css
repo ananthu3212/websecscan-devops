@@ -1,0 +1,170 @@
+/* .about-page styles */
+.about-page {
+  background-color: #010104; /* Updated background color */
+  min-height: 100vh;
+  color: #EBE9FC;
+  font-family: 'Space Grotesk', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* .about-hero styles */
+.about-hero {
+  width: 1142px;
+  height: 914px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  position: relative;
+}
+
+.hero-content {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* .hero-title styles */
+.hero-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 110%;
+  letter-spacing: 0%;
+  text-align: center;
+  color: #EBE9FC;
+  margin: 0;
+  position: absolute;
+  top: 17px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Title line and security-word styles */
+.title-line {
+  display: inline-block;
+}
+
+.security-word {
+  background: linear-gradient(90deg, #3A31D8 0%, #0600C2 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hero-title div {
+  margin-top: 5px;
+}
+
+.welcome-text-container {
+  width: 857px;
+  height: 66px;
+  position: absolute;
+  top: 122px;
+  left: 142px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.welcome-text {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 110%;
+  text-align: center;
+  color: #EBE9FC;
+  margin: 0;
+}
+
+/* Service cards section */
+.services-section {
+  width: 100%;
+  position: absolute;
+  top: 216px;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  gap: 40px; /* Added gap between the service cards */
+}
+
+/* Services container */
+.services-container {
+  display: flex;
+  justify-content: space-between; /* Spread cards with space between */
+  width: 100%;
+  max-width: 1142px; /* Keep max width */
+  gap: 30px; /* Add space between the cards */
+}
+
+/* .service-card styles */
+.service-card {
+  width: 314px;
+  height: 475px;
+  background: #020024;
+  border: 1px solid rgba(100, 116, 139, 0.3);
+  border-radius: 28px; /* Updated border-radius */
+  padding: 35px 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Service title styles */
+.service-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 22px;
+  color: #EBE9FC;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+/* Service content styles */
+.service-content {
+  display: flex;
+  flex-direction: column;
+  gap: 15px; /* Reduced gap between Function & Benefit */
+  flex-grow: 1;
+}
+
+/* Function and benefits section styles */
+.function-section,
+.benefits-section {
+  flex: 1;
+}
+
+/* Section label styles */
+.section-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 18px; /* Increased font size */
+  color: #EBE9FC;
+  margin-bottom: 12px;
+}
+
+/* Section text styles */
+.section-text {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 400;
+  font-size: 16px; /* Increased font size */
+  line-height: 1.5;
+  color: #EBE9FC;
+  margin: 0;
+  margin-left: 20px;
+  position: relative;
+}
+
+.section-text::before {
+  content: "•";
+  color: #60a5fa;
+  font-size: 18px;
+  position: absolute;
+  left: -15px;
+  top: 0;
+}

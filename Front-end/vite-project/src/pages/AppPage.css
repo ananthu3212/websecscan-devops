@@ -1,0 +1,74 @@
+/* Push header to top, content to bottom */
+.hero {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end; /* Push content to bottom */
+  padding: 0 100px 100px 100px; /* Only bottom padding */
+}
+
+.hero-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.hero-left {
+  width: 700px;
+  display: flex;
+  flex-direction: column;
+  gap: 49px;
+}
+
+.hero-text {
+  color: #EBE9FC;
+  font-size: 20px;
+  line-height: 1.4;
+  margin: 0;
+  border: 3px solid green;
+  padding: 15px;
+  background: rgba(0, 255, 0, 0.2);
+}
+
+.hero-input-container {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+  border: 3px solid blue;
+  padding: 15px;
+  background: rgba(0, 0, 255, 0.2);
+}
+
+.hero-input {
+  flex: 1;
+  padding: 16px 20px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+}
+
+.scan-button {
+  padding: 16px 40px;
+  background: #3A31D8;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.hero-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  flex: 1;
+}
+
+.hero-image {
+  width: 500px;
+  height: auto;
+  max-width: 100%;
+  display: block;
+}

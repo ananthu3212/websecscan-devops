@@ -1,0 +1,12 @@
+.main-content {
+  background-color: #010104; /* Updated background color */
+  min-height: 100vh;
+  color: #EBE9FC;
+  font-family: 'Space Grotesk', sans-serif;
+  margin-top: 80px;
+}
+
+.accent {
+  color: #3A31D8;
+  margin: 0.5;
+}

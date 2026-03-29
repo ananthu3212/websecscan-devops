@@ -1,0 +1,79 @@
+# -----------------------------
+# Base Image
+# -----------------------------
+FROM python:3.12-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    DEBIAN_FRONTEND=noninteractive
+
+# -----------------------------
+# System tools + WhatWeb + Nikto 
+# -----------------------------
+RUN apt-get update && apt-get install -y \
+    nmap \
+    default-jre \
+    git \
+    ruby \
+    ruby-dev \
+    build-essential \
+    libxml2-dev \
+    libxslt1-dev \
+    libyaml-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install bundler and WhatWeb
+RUN gem install bundler \
+ && git clone https://github.com/urbanadventurer/WhatWeb.git /opt/whatweb \
+ && cd /opt/whatweb \
+ && sed -i '1i require "set"' lib/whatweb/scan.rb \
+ && bundle install \
+ && ln -s /opt/whatweb/whatweb /usr/local/bin/whatweb \
+ && chmod +x /usr/local/bin/whatweb
+
+# Install Nikto
+RUN git clone https://github.com/sullo/nikto.git /opt/nikto \
+ && ln -s /opt/nikto/program/nikto.pl /usr/local/bin/nikto
+
+# -----------------------------
+# Install theHarvester
+# -----------------------------
+RUN git clone https://github.com/laramies/theHarvester.git /opt/theHarvester \
+ && pip install --no-cache-dir /opt/theHarvester
+# Add wait-for-it script
+ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /usr/local/bin/wait-for-it.sh
+RUN chmod +x /usr/local/bin/wait-for-it.sh
+
+# -----------------------------
+# App setup
+# -----------------------------
+WORKDIR /app
+
+# Copy the entire project first
+COPY . .
+
+# Check if requirements.txt exists
+RUN if [ ! -f "requirements.txt" ]; then \
+        echo "WARNING: requirements.txt not found in root. Creating minimal one..." && \
+        echo "Flask>=3.1.0" > requirements.txt && \
+        echo "flask-cors>=5.0.0" >> requirements.txt && \
+        echo "flask-mail>=0.9.1" >> requirements.txt && \
+        echo "sqlalchemy>=2.0.0" >> requirements.txt && \
+        echo "psycopg2-binary>=2.9.0" >> requirements.txt && \
+        echo "requests>=2.31.0" >> requirements.txt; \
+    fi
+
+# Install Python dependencies
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Check for Backend/requirements.txt and install if exists
+RUN if [ -f "Backend/requirements.txt" ]; then \
+        pip install --no-cache-dir -r Backend/requirements.txt; \
+    fi
+
+# Set Python path
+ENV PYTHONPATH="/app:${PYTHONPATH}"
+
+# Default command
+CMD ["python", "Backend/app.py"]

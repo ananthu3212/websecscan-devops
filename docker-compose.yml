@@ -1,0 +1,116 @@
+# ===============================
+# 🐳 Docker Compose Konfiguration
+# ===============================
+
+services:
+  # ------------------------------------
+  # 🔍 OWASP ZAP Container (Sicherheits-Scanner)
+  # ------------------------------------
+  zap:
+    image: zaproxy/zap-stable
+    container_name: zap_scanner
+    ports:
+      - '8080:8080'
+    environment:
+      - ZAP_HOST_KEY=0.0.0.0
+      - ZAP_API_HOST_OVERRIDE=0.0.0.0
+      - ZAP_API_KEY_DISABLE=true
+      - ZAP_HTTPS_DISABLED=true
+    command: >
+      zap.sh -daemon -host 0.0.0.0 -port 8080
+      -config api.disablekey=true
+      -config api.addrs.addr.name=.*
+      -config api.addrs.addr.regex=true
+      -config connection.timeoutInSecs=60
+      -config scanner.https=false
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+
+  # ------------------------------------
+  # 🗄️ PostgreSQL Datenbank
+  # ------------------------------------
+  db: 
+    image: postgres:15
+    container_name: websecscan-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD_FILE: /run/secrets/db_password
+    secrets:
+      - db_password
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ------------------------------------
+  # ⚙️ Flask Backend (WebSecScan App)
+  # ------------------------------------
+  app:
+    build:
+      context: .
+      dockerfile: Backend/dockerfile
+    container_name: websecscan_app
+    depends_on:
+      zap:
+        condition: service_healthy
+      db:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      OAUTHLIB_INSECURE_TRANSPORT: 1
+      FLASK_DEBUG: true
+      DB_PASSWORD: /run/secrets/db_password
+    secrets:
+      - db_password
+    volumes:
+      - ./:/app
+    working_dir: /app
+    ports:
+      - "5001:5001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/api/server-info"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    restart: unless-stopped
+
+  # ------------------------------------
+  # 💻 Frontend (Vite + Nginx)
+  # ------------------------------------
+  frontend:
+    build:
+      context: ./Front-end/vite-project
+      dockerfile: Dockerfile
+    container_name: websecscan_frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - app  # 🔥 FIXED: Simple string, not object with condition
+    restart: unless-stopped
+
+
+secrets:
+  db_password:
+    file: db_password.txt
+  
+
+
+# ------------------------------------
+# 💾 Volumes (Datenpersistenz)
+# ------------------------------------
+volumes:
+  db_data:

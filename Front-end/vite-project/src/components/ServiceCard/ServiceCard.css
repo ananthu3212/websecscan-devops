@@ -1,0 +1,60 @@
+.service-card {
+  width: 314px;
+  height: 475px;
+  background: #020024;
+  border: 1px solid rgba(100, 116, 139, 0.3);
+  border-radius: 28px; /* Updated border-radius */
+  padding: 35px 30px;
+  display: flex;
+  flex-direction: column;
+}
+
+.service-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 22px;
+  color: #EBE9FC;
+  margin-bottom: 15px; /* Reduced margin */
+  text-align: center;
+}
+
+.service-content {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;  /* Reduced gap between the function and benefit sections */
+  flex-grow: 1;
+}
+
+.function-section,
+.benefits-section {
+  flex: 1;
+  margin-bottom: 5px; /* Reduced margin between sections */
+}
+
+.section-label {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 600;
+  font-size: 16px;
+  color: #EBE9FC;
+  margin-bottom: 5px; /* Reduced margin */
+}
+
+.section-text {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #EBE9FC;
+  margin: 0;
+  margin-left: 20px;
+  position: relative;
+}
+
+.section-text::before {
+  content: "•";
+  color: #60a5fa;
+  font-size: 18px;
+  position: absolute;
+  left: -15px;
+  top: 0;
+}
