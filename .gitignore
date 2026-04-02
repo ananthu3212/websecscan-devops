@@ -29,5 +29,14 @@ npm-debug.log*
 # Scanner artifacts
 nikto_*.txt
 nikto_*.json
-EOF
+
+# Certificates
 /certs
+
+# Terraform
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup
+terraform.tfvars
+*.tfvars
+.terraform.lock.hcl
