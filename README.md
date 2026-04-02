@@ -1,81 +1,101 @@
-# WebSecScan
+# WebSecScan — Cloud DevOps Infrastruktur
 
-**WebSecScan** is a web security scanning application designed to help you identify vulnerabilities in web applications efficiently. This guide will walk you through setting up and running the project locally using Docker.
+Production-grade cloud deployment of WebSecScan, a web vulnerability 
+scanning platform — deployed on AWS using Terraform, Docker, and 
+GitHub Actions CI/CD.
 
----
+## 🔍 Was ist WebSecScan?
+WebSecScan ist ein Sicherheitstool zum Scannen von Webseiten auf 
+Schwachstellen. Es verwendet OWASP ZAP, Nmap, Nikto, WhatWeb und 
+theHarvester. Ergebnisse werden in PostgreSQL gespeichert und über 
+ein React-Frontend angezeigt.
 
-## **Table of Contents**
+> **Hinweis:** Die Anwendung wurde ursprünglich als Teamprojekt 
+> entwickelt. Diese Repository konzentriert sich auf die 
+> Cloud-Infrastruktur und DevOps-Implementierung.
 
-- [Prerequisites](#prerequisites)
-- [Setup Instructions](#setup-instructions)
-- [Access the Application](#access-the-application)
-- [Stopping the Application](#stopping-the-application)
-- [Project Structure](#project-structure)
-- [Notes](#notes)
-
----
-
-## **Prerequisites**
-
-Before starting, make sure you have:
-
-- [Docker Desktop](https://www.docker.com/products/docker-desktop) installed
-- Virtualization enabled in your BIOS/UEFI
-- A terminal or command prompt
-
----
-
-## **Setup Instructions**
-
-1. **Open Docker Desktop**  
-   Ensure Docker is running and virtualization is enabled.
-
-2. **Choose a project directory**  
-   Decide where on your computer you want to store the project.
-
-3. **Clone the repository**  
-
-   ```bash
-   git clone https://git.w-hs.de/tobias.urban/websecscan.git
-4. **Navigate into the project folder**  
-
-   ```bash
-   cd websecscan
-
- 5.**Build and Start the Project with Docker Compose**
-
-Docker Compose will build the necessary images and start all services defined in the `docker-compose.yml` file.
-
-Run the following command in the terminal inside the project directory:
-
-```bash
-docker compose up --build 
+## 🏗️ Architektur
 ```
-6. **Access the Application**
-
-Once the Docker containers are running, you can access the application in your web browser:
-http://localhost:3000
-- After visiting the website, you will need to register an account.  
-- Please refer to the separate `REGISTRATION.md` file for detailed step-by-step instructions on account creation and email verification.
-
-7.**Stopping the Application**
-
-To stop the application and remove the running Docker containers, you have two options:
-
-1. **If you started the containers in the foreground** (without `-d`), press `Ctrl + C` in the terminal where Docker Compose is running.  
-
-2. **If you started the containers in detached mode** (with `-d`), run the following command from the project directory:
-
-```bash
-docker compose down
+INTERNET
+    │
+    ▼
+Internet Gateway
+    │
+    ▼
+Öffentliches Subnetz (eu-central-1a + eu-central-1b)
+├── React Frontend  (ECS Service, Port 3000)
+└── ZAP Scanner     (ECS Task, bei Bedarf)
+    │
+    │ nur interner Datenverkehr
+    ▼
+Privates Subnetz (eu-central-1a + eu-central-1b)
+├── Flask Backend   (ECS Service, Port 5001)
+└── PostgreSQL      (RDS, Port 5432)
 ```
-8. **Project Structure**
 
-Here’s a high-level overview of the WebSecScan project folder layout:
-websecscan/
-│
-├── backend/           # Server-side code and APIs
-├── frontend/          # Client-side code (UI)
-├── docker-compose.yml # Docker configuration for all services
-├── README.md          # Project documentation
-└── .env.example       # Environment variable template
+## 🛠️ Technologie-Stack
+
+| Kategorie | Technologie |
+|---|---|
+| Cloud-Anbieter | AWS (eu-central-1 Frankfurt) |
+| Infrastructure as Code | Terraform |
+| Containerisierung | Docker |
+| Container-Registry | AWS ECR |
+| Container-Orchestrierung | AWS ECS (Fargate) |
+| Datenbank | AWS RDS PostgreSQL 15 |
+| CI/CD | GitHub Actions |
+| Backend | Flask (Python) |
+| Frontend | React + Vite + Nginx |
+| Sicherheits-Scanning | OWASP ZAP, Nmap, Nikto, WhatWeb, theHarvester |
+
+## 🔐 Sicherheitsdesign
+- Backend-Dienste laufen in **privaten Subnetzen** — nicht aus dem Internet erreichbar
+- **Least-Privilege-Sicherheitsgruppen** — jeder Dienst kommuniziert nur mit dem, was er braucht
+- Datenbank hat **keine öffentliche IP** — nur Flask kann intern darauf zugreifen
+- Geheimnisse werden über **Umgebungsvariablen** verwaltet — nie im Code hart kodiert
+- Docker-Images in **privatem ECR** gespeichert — nicht öffentlich zugänglich
+
+## 📁 Projektstruktur
+```
+websecscan-devops/
+├── terraform/
+│   ├── main.tf                  # Hauptmodul
+│   ├── variables.tf             # Eingabevariablen
+│   ├── outputs.tf               # Ausgabewerte
+│   └── modules/
+│       ├── networking/          # VPC, Subnetze, Gateways
+│       ├── security-groups/     # Sicherheitsgruppen
+│       ├── rds/                 # PostgreSQL auf AWS RDS
+│       ├── ecr/                 # Docker-Image-Registry
+│       └── ecs/                 # Container-Orchestrierung
+├── Backend/                     # Flask-Anwendung
+├── Front-end/                   # React + Vite Anwendung
+└── docker-compose.yml           # Lokale Entwicklungsumgebung
+```
+
+## 🚀 Deployment
+
+### Voraussetzungen
+- AWS-Konto mit konfigurierter CLI
+- Terraform installiert
+- Docker installiert
+
+### Infrastruktur deployen
+```bash
+cd terraform
+terraform init
+terraform plan
+terraform apply
+```
+
+### Infrastruktur löschen
+```bash
+terraform destroy
+```
+
+## 📚 Was ich gelernt habe
+- AWS-Netzwerk (VPC, Subnetze, Sicherheitsgruppen, Routentabellen)
+- Infrastructure as Code mit Terraform
+- Container-Orchestrierung mit ECS
+- DevSecOps-Praktiken — Sicherheit in jeder Schicht
+- CI/CD-Automatisierung mit GitHub Actions
