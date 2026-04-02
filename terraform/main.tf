@@ -38,3 +38,8 @@ module "rds" {
   db_subnet_ids        = module.networking.private_subnet_ids
   db_security_group_id = module.security_groups.postgres_sg_id
 }
+
+module "ecr" {
+  source       = "./modules/ecr"
+  project_name = var.project_name
+}
