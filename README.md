@@ -121,3 +121,6 @@ terraform destroy
 ![RDS Overview](screenshots/rds-overview.png)
 ### Application Live — Deployed via CI/CD Pipeline
 ![Live App CI/CD](screenshots/app-live-cicd.png)
+
+---
+*Deployed on AWS Frankfurt (eu-central-1) using Terraform, Docker, ECS Fargate, and GitHub Actions CI/CD.*
