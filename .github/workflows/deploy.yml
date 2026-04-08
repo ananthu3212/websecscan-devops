@@ -1,0 +1,78 @@
+name: WebSecScan CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: eu-central-1
+  ECR_REGISTRY: 237657481560.dkr.ecr.eu-central-1.amazonaws.com
+  FLASK_IMAGE: websecscan-flask
+  REACT_IMAGE: websecscan-react
+  ZAP_IMAGE: websecscan-zap
+  ECS_CLUSTER: websecscan-cluster
+  FLASK_SERVICE: websecscan-flask-service
+  REACT_SERVICE: websecscan-react-service
+
+jobs:
+  deploy:
+    name: Build und Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Code auschecken
+        uses: actions/checkout@v4
+
+      - name: AWS Zugangsdaten konfigurieren
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Bei Amazon ECR anmelden
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Flask-Image bauen und pushen
+        run: |
+          docker buildx build \
+            --platform linux/amd64 \
+            -t ${{ env.ECR_REGISTRY }}/${{ env.FLASK_IMAGE }}:latest \
+            -t ${{ env.ECR_REGISTRY }}/${{ env.FLASK_IMAGE }}:${{ github.sha }} \
+            -f Backend/dockerfile \
+            . \
+            --push
+
+      - name: React-Image bauen und pushen
+        run: |
+          docker buildx build \
+            --platform linux/amd64 \
+            -t ${{ env.ECR_REGISTRY }}/${{ env.REACT_IMAGE }}:latest \
+            -t ${{ env.ECR_REGISTRY }}/${{ env.REACT_IMAGE }}:${{ github.sha }} \
+            -f Front-end/vite-project/Dockerfile \
+            Front-end/vite-project/ \
+            --push
+
+      - name: Flask ECS Service aktualisieren
+        run: |
+          aws ecs update-service \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --service ${{ env.FLASK_SERVICE }} \
+            --force-new-deployment \
+            --region ${{ env.AWS_REGION }}
+
+      - name: React ECS Service aktualisieren
+        run: |
+          aws ecs update-service \
+            --cluster ${{ env.ECS_CLUSTER }} \
+            --service ${{ env.REACT_SERVICE }} \
+            --force-new-deployment \
+            --region ${{ env.AWS_REGION }}
+
+      - name: Deployment abgeschlossen
+        run: |
+          echo "✅ Deployment erfolgreich abgeschlossen!"
+          echo "Flask Image: ${{ env.ECR_REGISTRY }}/${{ env.FLASK_IMAGE }}:${{ github.sha }}"
+          echo "React Image: ${{ env.ECR_REGISTRY }}/${{ env.REACT_IMAGE }}:${{ github.sha }}"
