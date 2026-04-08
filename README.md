@@ -119,3 +119,5 @@ terraform destroy
 
 ### RDS Service Overview
 ![RDS Overview](screenshots/rds-overview.png)
+### Application Live — Deployed via CI/CD Pipeline
+![Live App CI/CD](screenshots/app-live-cicd.png)
