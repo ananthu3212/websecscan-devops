@@ -1,4 +1,4 @@
-# ========================
+
 # IAM Rolle — Berechtigung für ECS Tasks
 # ========================
 resource "aws_iam_role" "ecs_task_execution_role" {
@@ -49,7 +49,33 @@ resource "aws_cloudwatch_log_group" "zap" {
   name              = "/ecs/${var.project_name}/zap"
   retention_in_days = 7
 }
+# ========================
+# Service Discovery — Stabiler DNS-Name für Flask
+# ========================
+resource "aws_service_discovery_private_dns_namespace" "main" {
+  name        = "${var.project_name}.local"
+  vpc         = var.vpc_id
+  description = "Private DNS Namespace für WebSecScan Services"
+}
 
+resource "aws_service_discovery_service" "flask" {
+  name = "flask"
+
+  dns_config {
+    namespace_id = aws_service_discovery_private_dns_namespace.main.id
+
+    dns_records {
+      ttl  = 10
+      type = "A"
+    }
+
+    routing_policy = "MULTIVALUE"
+  }
+
+  health_check_custom_config {
+    failure_threshold = 1
+  }
+}
 # ========================
 # Flask Task Definition — Bauplan für Flask Container
 # ========================
@@ -90,6 +116,25 @@ resource "aws_ecs_task_definition" "flask" {
 
     essential = true
   }])
+}
+resource "aws_ecs_service" "flask" {
+  name            = "${var.project_name}-flask-service"
+  cluster         = aws_ecs_cluster.main.id
+  task_definition = aws_ecs_task_definition.flask.arn
+  desired_count   = 1
+  launch_type     = "FARGATE"
+
+  network_configuration {
+    subnets          = var.private_subnet_ids
+    security_groups  = [var.flask_sg_id]
+    assign_public_ip = false
+  }
+
+  service_registries {
+    registry_arn = aws_service_discovery_service.flask.arn
+  }
+
+  depends_on = [aws_iam_role_policy_attachment.ecs_task_execution_role_policy]
 }
 
 # ========================
@@ -166,26 +211,6 @@ resource "aws_ecs_task_definition" "zap" {
     essential = true
   }])
 }
-
-# ========================
-# Flask ECS Service — läuft 24/7
-# ========================
-resource "aws_ecs_service" "flask" {
-  name            = "${var.project_name}-flask-service"
-  cluster         = aws_ecs_cluster.main.id
-  task_definition = aws_ecs_task_definition.flask.arn
-  desired_count   = 1
-  launch_type     = "FARGATE"
-
-  network_configuration {
-    subnets          = var.private_subnet_ids
-    security_groups  = [var.flask_sg_id]
-    assign_public_ip = false
-  }
-
-  depends_on = [aws_iam_role_policy_attachment.ecs_task_execution_role_policy]
-}
-
 # ========================
 # React ECS Service — läuft 24/7
 # ========================

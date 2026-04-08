@@ -68,3 +68,7 @@ variable "db_password" {
   type        = string
   sensitive   = true
 }
+variable "vpc_id" {
+  description = "VPC ID für Service Discovery"
+  type        = string
+}
